@@ -118,8 +118,8 @@ export default function Wheel({ entries, isSpinning, winner, onSpinComplete }) {
       // Add half slice to land in the middle of the slice
       const targetAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
       
-      // Random number of full rotations (5-8) plus the exact angle to land on winner
-      const spins = 5 + Math.floor(Math.random() * 3);
+      // Random number of full rotations (3-4) plus the exact angle to land on winner
+      const spins = 3 + Math.floor(Math.random() * 2);
       const newTarget = rotation + (spins * 360) + targetAngle - (rotation % 360);
       
       setTargetRotation(newTarget);
@@ -133,7 +133,7 @@ export default function Wheel({ entries, isSpinning, winner, onSpinComplete }) {
     let animationId;
     const startRotation = rotation;
     const startTime = Date.now();
-    const duration = 4000; // 4 seconds
+    const duration = 2500; // 2.5 seconds
     
     const animate = () => {
       const elapsed = Date.now() - startTime;
