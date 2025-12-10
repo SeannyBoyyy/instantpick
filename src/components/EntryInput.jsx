@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { parseEntries, getDuplicateInfo } from '../utils/pickWinners';
 
 // Default dummy entries
@@ -17,13 +17,24 @@ const DUMMY_ENTRIES = [
 
 const STORAGE_KEY = 'instantpick_entries';
 
-export default function EntryInput({ entries, setEntries }) {
+const EntryInput = forwardRef(function EntryInput({ entries, setEntries }, ref) {
   const [text, setText] = useState(() => {
     // Load from localStorage on init, or use dummy entries
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved !== null ? saved : DUMMY_ENTRIES.join('\n');
   });
   const [duplicateWarning, setDuplicateWarning] = useState(null);
+  
+  // Expose method to remove entries from text
+  useImperativeHandle(ref, () => ({
+    removeEntriesFromText: (entriesToRemove) => {
+      const currentEntries = parseEntries(text);
+      const filtered = currentEntries.filter(entry => !entriesToRemove.includes(entry));
+      const newText = filtered.join('\n');
+      setText(newText);
+      localStorage.setItem(STORAGE_KEY, newText);
+    }
+  }));
   
   // Save to localStorage whenever text changes
   useEffect(() => {
@@ -147,4 +158,6 @@ export default function EntryInput({ entries, setEntries }) {
       </div>
     </div>
   );
-}
+});
+
+export default EntryInput;

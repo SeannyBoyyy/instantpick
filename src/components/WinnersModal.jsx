@@ -1,32 +1,85 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
-export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemoveWinners, showConfetti }) {
-  // Trigger confetti on open
+// Create celebration sound
+const createCelebrationSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    return () => {
+      // Fanfare notes - celebratory ascending pattern
+      const notes = [
+        { freq: 523.25, delay: 0, duration: 0.15 },     // C5
+        { freq: 659.25, delay: 0.1, duration: 0.15 },   // E5
+        { freq: 783.99, delay: 0.2, duration: 0.15 },   // G5
+        { freq: 1046.50, delay: 0.3, duration: 0.4 },   // C6 (longer)
+      ];
+      
+      notes.forEach(({ freq, delay, duration }) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = freq;
+        oscillator.type = 'sine';
+        
+        const startTime = audioContext.currentTime + delay;
+        gainNode.gain.setValueAtTime(0.25, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      });
+    };
+  } catch (e) {
+    return () => {}; // Return no-op if audio fails
+  }
+};
+
+export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemoveWinners, showConfetti, soundEnabled = true }) {
+  const celebrationSoundRef = useRef(null);
+  
+  // Initialize sound
   useEffect(() => {
-    if (isOpen && showConfetti && winners.length > 0) {
-      // Muted confetti colors - professional palette
-      const colors = ['#0d9488', '#14b8a6', '#0891b2', '#64748b', '#94a3b8'];
-      
-      const launchConfetti = () => {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.7 },
-          colors: colors,
-          disableForReducedMotion: true,
-          scalar: 0.8,
-        });
-      };
-      
-      launchConfetti();
-      const timer = setTimeout(launchConfetti, 150);
-      
-      return () => clearTimeout(timer);
+    if (!celebrationSoundRef.current) {
+      celebrationSoundRef.current = createCelebrationSound();
     }
-  }, [isOpen, showConfetti, winners.length]);
+  }, []);
+  
+  // Trigger confetti and sound on open
+  useEffect(() => {
+    if (isOpen && winners.length > 0) {
+      // Play celebration sound
+      if (soundEnabled && celebrationSoundRef.current) {
+        celebrationSoundRef.current();
+      }
+      
+      // Muted confetti colors - professional palette
+      if (showConfetti) {
+        const colors = ['#0d9488', '#14b8a6', '#0891b2', '#64748b', '#94a3b8'];
+        
+        const launchConfetti = () => {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.7 },
+            colors: colors,
+            disableForReducedMotion: true,
+            scalar: 0.8,
+          });
+        };
+        
+        launchConfetti();
+        const timer = setTimeout(launchConfetti, 150);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isOpen, showConfetti, winners.length, soundEnabled]);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

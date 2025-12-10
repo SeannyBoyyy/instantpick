@@ -47,12 +47,6 @@ function App() {
     const uniqueEntries = [...new Set(entries.filter(Boolean))];
     if (uniqueEntries.length === 0) return;
     
-    // Play sound if enabled
-    if (settings.soundEnabled) {
-      SPIN_SOUND.currentTime = 0;
-      SPIN_SOUND.play().catch(() => {});
-    }
-    
     setIsSpinning(true);
     
     // Pre-calculate winners (independent from wheel visual)
@@ -96,7 +90,12 @@ function App() {
 
   const handleRemoveWinnersFromEntries = useCallback(() => {
     if (winners.length === 0) return;
+    // Update the entries array
     setEntries(prev => prev.filter(entry => !winners.includes(entry)));
+    // Also update the text in EntryInput component
+    if (entryInputRef.current) {
+      entryInputRef.current.removeEntriesFromText(winners);
+    }
   }, [winners]);
 
   const uniqueEntryCount = new Set(entries.filter(Boolean)).size;
@@ -234,6 +233,8 @@ function App() {
                 entries={entries}
                 isSpinning={isSpinning}
                 onSpinComplete={handleSpinComplete}
+                winners={winners}
+                soundEnabled={settings.soundEnabled}
               />
               
               {/* Stats */}
@@ -279,14 +280,16 @@ function App() {
       </footer>
 
       {/* Modals */}
-<WinnersModal
-          isOpen={showWinnersModal}
-          onClose={() => setShowWinnersModal(false)}
-          winners={winners}
-          onReset={handleReset}
-          onRemoveWinners={handleRemoveWinnersFromEntries}
-          showConfetti={settings.confettiEnabled}
-        />      <SettingsPanel
+      <WinnersModal
+        isOpen={showWinnersModal}
+        onClose={() => setShowWinnersModal(false)}
+        winners={winners}
+        onReset={handleReset}
+        onRemoveWinners={handleRemoveWinnersFromEntries}
+        showConfetti={settings.confettiEnabled}
+        soundEnabled={settings.soundEnabled}
+      />
+      <SettingsPanel
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
         settings={settings}
