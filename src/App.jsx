@@ -233,7 +233,6 @@ function App() {
               <Wheel
                 entries={entries}
                 isSpinning={isSpinning}
-                winner={winners[0]}
                 onSpinComplete={handleSpinComplete}
               />
               
