@@ -17,7 +17,7 @@ const COLORS = [
   '#bae6fd', // sky-200
 ];
 
-export default function Wheel({ entries, isSpinning, onSpinComplete }) {
+export default function Wheel({ entries, isSpinning, winner, onSpinComplete }) {
   const canvasRef = useRef(null);
   const [rotation, setRotation] = useState(0);
   const [targetRotation, setTargetRotation] = useState(0);
@@ -103,13 +103,28 @@ export default function Wheel({ entries, isSpinning, onSpinComplete }) {
   
   // Handle spinning animation
   useEffect(() => {
-    if (isSpinning) {
-      // Random number of full rotations (5-8) plus random final position
-      const spins = 5 + Math.random() * 3;
-      const newTarget = rotation + (spins * 360) + (Math.random() * 360);
+    if (isSpinning && winner) {
+      // Find the index of the winner in the display entries
+      const winnerIndex = displayEntries.indexOf(winner);
+      if (winnerIndex === -1) return;
+      
+      // Calculate the angle for this slice
+      // The pointer is at the top (12 o'clock position)
+      // Slices are drawn starting from -90 degrees (top)
+      const sliceAngle = 360 / displayEntries.length;
+      
+      // Calculate target angle: we want the winner slice center to be at top (0 degrees)
+      // The slice at index 0 starts at top, so we need to rotate to bring winnerIndex to top
+      // Add half slice to land in the middle of the slice
+      const targetAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+      
+      // Random number of full rotations (5-8) plus the exact angle to land on winner
+      const spins = 5 + Math.floor(Math.random() * 3);
+      const newTarget = rotation + (spins * 360) + targetAngle - (rotation % 360);
+      
       setTargetRotation(newTarget);
     }
-  }, [isSpinning]);
+  }, [isSpinning, winner, displayEntries]);
   
   // Animate rotation
   useEffect(() => {
