@@ -112,7 +112,7 @@ function App() {
             <div className="flex items-center gap-4">
               {/* Company Logo */}
               <img 
-                src="/instantpick/logo.png" 
+                src="logo.png" 
                 alt="Company Logo" 
                 className="h-10 w-auto object-contain"
               />
