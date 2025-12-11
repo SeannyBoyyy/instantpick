@@ -5,7 +5,8 @@ export default function SettingsPanel({
   isOpen, 
   onClose, 
   settings, 
-  onSettingsChange
+  onSettingsChange,
+  onResetApp
 }) {
   const updateSetting = (key, value) => {
     onSettingsChange({ ...settings, [key]: value });
@@ -119,10 +120,26 @@ export default function SettingsPanel({
                   </div>
                 </div>
 
+                {/* Reset App Button */}
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <button
+                    onClick={() => {
+                      if (window.confirm('This will clear all entries, history, and settings. Are you sure?')) {
+                        onResetApp();
+                      }
+                    }}
+                    className="w-full py-2.5 px-4 text-sm font-medium text-red-600 
+                             bg-red-50 border border-red-200 rounded-lg 
+                             hover:bg-red-100 transition-colors duration-200"
+                  >
+                    Reset App & Clear All Data
+                  </button>
+                </div>
+
                 {/* Close Button */}
                 <button
                   onClick={onClose}
-                  className="mt-6 w-full py-3 px-4 text-sm font-medium text-white 
+                  className="mt-4 w-full py-3 px-4 text-sm font-medium text-white 
                            bg-teal-600 rounded-lg hover:bg-teal-700 
                            transition-colors duration-200"
                 >

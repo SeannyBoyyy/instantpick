@@ -98,6 +98,13 @@ function App() {
     }
   }, [winners]);
 
+  const handleResetApp = useCallback(() => {
+    // Clear all localStorage
+    localStorage.clear();
+    // Reload the page to reset everything
+    window.location.reload();
+  }, []);
+
   const uniqueEntryCount = new Set(entries.filter(Boolean)).size;
   const canSpin = uniqueEntryCount > 0 && !isSpinning;
 
@@ -294,6 +301,7 @@ function App() {
         onClose={() => setShowSettings(false)}
         settings={settings}
         onSettingsChange={setSettings}
+        onResetApp={handleResetApp}
       />
     </div>
   );
