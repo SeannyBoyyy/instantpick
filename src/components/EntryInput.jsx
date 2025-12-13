@@ -145,8 +145,10 @@ const EntryInput = forwardRef(function EntryInput({ entries, setEntries }, ref) 
         </button>
         <button
           onClick={() => {
-            setText('');
-            localStorage.removeItem(STORAGE_KEY);
+            if (window.confirm('Are you sure you want to clear all entries?')) {
+              setText('');
+              localStorage.removeItem(STORAGE_KEY);
+            }
           }}
           disabled={!text}
           className="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 

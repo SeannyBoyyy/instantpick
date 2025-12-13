@@ -1,21 +1,65 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
-// Professional color palette - muted teal/blue tones
-const COLORS = [
-  '#0d9488', // teal-600
-  '#14b8a6', // teal-500
-  '#5eead4', // teal-300
-  '#99f6e4', // teal-200
-  '#0891b2', // cyan-600
-  '#06b6d4', // cyan-500
-  '#67e8f9', // cyan-300
-  '#a5f3fc', // cyan-200
-  '#0284c7', // sky-600
-  '#0ea5e9', // sky-500
-  '#7dd3fc', // sky-300
-  '#bae6fd', // sky-200
-];
+// Color theme palettes
+export const COLOR_THEMES = {
+  teal: {
+    name: 'Teal & Cyan',
+    colors: [
+      '#0d9488', '#14b8a6', '#5eead4', '#99f6e4',
+      '#0891b2', '#06b6d4', '#67e8f9', '#a5f3fc',
+      '#0284c7', '#0ea5e9', '#7dd3fc', '#bae6fd',
+    ]
+  },
+  rainbow: {
+    name: 'Rainbow',
+    colors: [
+      '#ef4444', '#f97316', '#eab308', '#22c55e',
+      '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899',
+      '#f43f5e', '#fb923c', '#facc15', '#4ade80',
+    ]
+  },
+  purple: {
+    name: 'Purple & Pink',
+    colors: [
+      '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd',
+      '#db2777', '#ec4899', '#f472b6', '#f9a8d4',
+      '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe',
+    ]
+  },
+  ocean: {
+    name: 'Ocean Blue',
+    colors: [
+      '#1e40af', '#2563eb', '#3b82f6', '#60a5fa',
+      '#0e7490', '#0891b2', '#22d3ee', '#67e8f9',
+      '#0f766e', '#14b8a6', '#2dd4bf', '#5eead4',
+    ]
+  },
+  sunset: {
+    name: 'Sunset',
+    colors: [
+      '#dc2626', '#ea580c', '#d97706', '#ca8a04',
+      '#f87171', '#fb923c', '#fbbf24', '#facc15',
+      '#b91c1c', '#c2410c', '#b45309', '#a16207',
+    ]
+  },
+  forest: {
+    name: 'Forest',
+    colors: [
+      '#166534', '#15803d', '#22c55e', '#4ade80',
+      '#365314', '#3f6212', '#65a30d', '#84cc16',
+      '#14532d', '#166534', '#16a34a', '#22c55e',
+    ]
+  },
+  monochrome: {
+    name: 'Monochrome',
+    colors: [
+      '#1f2937', '#374151', '#4b5563', '#6b7280',
+      '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6',
+      '#111827', '#1f2937', '#374151', '#4b5563',
+    ]
+  },
+};
 
 // Create realistic roulette tick sound - soft wooden click
 const createTickSound = () => {
@@ -83,7 +127,7 @@ const createWinSound = () => {
   };
 };
 
-export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [], soundEnabled = true }) {
+export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [], soundEnabled = true, colorTheme = 'teal' }) {
   const canvasRef = useRef(null);
   const [rotation, setRotation] = useState(0);
   const [targetRotation, setTargetRotation] = useState(0);
@@ -91,6 +135,9 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
   const lastTickAngleRef = useRef(0);
   const tickSoundRef = useRef(null);
   const winSoundRef = useRef(null);
+  
+  // Get colors from theme
+  const COLORS = COLOR_THEMES[colorTheme]?.colors || COLOR_THEMES.teal.colors;
   
   // Initialize audio on first user interaction
   useEffect(() => {
@@ -176,7 +223,7 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
     ctx.lineWidth = 2;
     ctx.stroke();
     
-  }, [displayEntries, rotation]);
+  }, [displayEntries, rotation, COLORS]);
   
   // Handle spinning animation - only set target once when spin starts
   useEffect(() => {
@@ -185,15 +232,15 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
       
       const winnerIndex = displayEntries.findIndex(entry => entry === winners[0]);
       
-      console.log('=== SPIN CALCULATION START ===');
-      console.log('Winner:', winners[0]);
-      console.log('Winner index in wheel:', winnerIndex);
-      console.log('Total entries:', displayEntries.length);
-      console.log('All entries:', displayEntries);
+      // console.log('=== SPIN CALCULATION START ===');
+      // console.log('Winner:', winners[0]);
+      // console.log('Winner index in wheel:', winnerIndex);
+      // console.log('Total entries:', displayEntries.length);
+      // console.log('All entries:', displayEntries);
       
       if (winnerIndex !== -1) {
         const sliceAngle = 360 / displayEntries.length;
-        console.log('Slice angle (degrees per entry):', sliceAngle);
+        // console.log('Slice angle (degrees per entry):', sliceAngle);
         
         // The wheel is drawn with:
         // - Slice 0 starts at -90° (top) and goes clockwise
@@ -213,28 +260,29 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
         // But we want positive rotation, so: R = 360 - ((winnerIndex + 0.5) * sliceAngle) % 360
         
         const winnerCenterOffset = (winnerIndex + 0.5) * sliceAngle;
-        console.log('Winner center offset from top (at rotation=0):', winnerCenterOffset);
+        // console.log('Winner center offset from top (at rotation=0):', winnerCenterOffset);
         
         // To bring winner to top, we rotate backwards by this amount (or forwards by 360 - amount)
         let targetFinalPosition = (360 - winnerCenterOffset) % 360;
         if (targetFinalPosition < 0) targetFinalPosition += 360;
-        console.log('Target final rotation (mod 360) to place winner at top:', targetFinalPosition);
+        // console.log('Target final rotation (mod 360) to place winner at top:', targetFinalPosition);
         
         const currentMod = ((rotation % 360) + 360) % 360;
-        console.log('Current rotation mod 360:', currentMod);
+        // console.log('Current rotation mod 360:', currentMod);
         
         let extraRotation = targetFinalPosition - currentMod;
         if (extraRotation < 0) extraRotation += 360;
-        console.log('Extra rotation needed:', extraRotation);
+        // console.log('Extra rotation needed:', extraRotation);
         
-        const fullSpins = Math.floor(5 + Math.random() * 2);
+        // Random spins between 5-8 to prevent prediction/cheating
+        const fullSpins = Math.floor(5 + Math.random() * 4);
         const totalRotation = fullSpins * 360 + extraRotation;
         
-        console.log('Full spins:', fullSpins);
-        console.log('Total rotation to add:', totalRotation);
-        console.log('Final target rotation:', rotation + totalRotation);
-        console.log('Final rotation mod 360:', ((rotation + totalRotation) % 360).toFixed(2));
-        console.log('=== SPIN CALCULATION END ===');
+        // console.log('Full spins:', fullSpins);
+        // console.log('Total rotation to add:', totalRotation);
+        // console.log('Final target rotation:', rotation + totalRotation);
+        // console.log('Final rotation mod 360:', ((rotation + totalRotation) % 360).toFixed(2));
+        // console.log('=== SPIN CALCULATION END ===');
         
         setTargetRotation(rotation + totalRotation);
       }
@@ -283,9 +331,9 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
         const finalRotationMod = ((currentRotation % 360) + 360) % 360;
         const sliceAngleDeg = 360 / displayEntries.length;
         
-        console.log('=== SPIN COMPLETE VERIFICATION ===');
-        console.log('Final rotation:', currentRotation.toFixed(2));
-        console.log('Final rotation mod 360:', finalRotationMod.toFixed(2));
+        // console.log('=== SPIN COMPLETE VERIFICATION ===');
+        // console.log('Final rotation:', currentRotation.toFixed(2));
+        // console.log('Final rotation mod 360:', finalRotationMod.toFixed(2));
         
         // Calculate which slice is at the top (arrow position)
         // At rotation R, slice i's center is at: (i + 0.5) * sliceAngle + R - 90° from horizontal
@@ -303,7 +351,7 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
           // Distance from top (0 degrees)
           const distanceFromTop = Math.min(sliceCenterAfterRotation, 360 - sliceCenterAfterRotation);
           
-          console.log(`  Slice ${i} (${entry}): center after rotation = ${sliceCenterAfterRotation.toFixed(1)}°, distance from top = ${distanceFromTop.toFixed(1)}°`);
+          // console.log(`  Slice ${i} (${entry}): center after rotation = ${sliceCenterAfterRotation.toFixed(1)}°, distance from top = ${distanceFromTop.toFixed(1)}°`);
           
           if (distanceFromTop < closestDistance) {
             closestDistance = distanceFromTop;
@@ -312,12 +360,12 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
         });
         
         const entryUnderArrow = displayEntries[closestSlice];
-        console.log('---');
-        console.log('Slice under arrow (index):', closestSlice);
-        console.log('Entry under arrow:', entryUnderArrow);
-        console.log('Expected winner:', winners[0]);
-        console.log('Match:', entryUnderArrow === winners[0] ? '✓ CORRECT' : '✗ MISMATCH');
-        console.log('=== END VERIFICATION ===');
+        // console.log('---');
+        // console.log('Slice under arrow (index):', closestSlice);
+        // console.log('Entry under arrow:', entryUnderArrow);
+        // console.log('Expected winner:', winners[0]);
+        // console.log('Match:', entryUnderArrow === winners[0] ? '✓ CORRECT' : '✗ MISMATCH');
+        // console.log('=== END VERIFICATION ===');
         
         if (soundEnabled && winSoundRef.current) {
           winSoundRef.current();

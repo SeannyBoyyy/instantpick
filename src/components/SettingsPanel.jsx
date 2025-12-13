@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { Dialog, Transition, Switch } from '@headlessui/react';
+import { COLOR_THEMES } from './Wheel';
 
 export default function SettingsPanel({ 
   isOpen, 
@@ -72,6 +73,37 @@ export default function SettingsPanel({
                     <p className="mt-1.5 text-xs text-gray-500">
                       How many winners to pick each spin
                     </p>
+                  </div>
+
+                  {/* Color Theme */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Color Theme
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {Object.entries(COLOR_THEMES).map(([key, theme]) => (
+                        <button
+                          key={key}
+                          onClick={() => updateSetting('colorTheme', key)}
+                          className={`p-2 rounded-lg border-2 transition-all duration-200 ${
+                            settings.colorTheme === key 
+                              ? 'border-teal-500 bg-teal-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex gap-0.5 mb-1.5 justify-center">
+                            {theme.colors.slice(0, 6).map((color, i) => (
+                              <div
+                                key={i}
+                                className="w-4 h-4 rounded-full"
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs font-medium text-gray-700">{theme.name}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Toggle Options */}

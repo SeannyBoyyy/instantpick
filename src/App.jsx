@@ -28,6 +28,7 @@ function App() {
       winnerCount: 1,
       soundEnabled: true,
       confettiEnabled: true,
+      colorTheme: 'teal',
     };
   });
   
@@ -242,6 +243,7 @@ function App() {
                 onSpinComplete={handleSpinComplete}
                 winners={winners}
                 soundEnabled={settings.soundEnabled}
+                colorTheme={settings.colorTheme}
               />
               
               {/* Stats */}
