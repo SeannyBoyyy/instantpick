@@ -4,13 +4,34 @@ import EntryInput from './components/EntryInput';
 import SpinButton from './components/SpinButton';
 import WinnersModal from './components/WinnersModal';
 import SettingsPanel from './components/SettingsPanel';
+import InstallButton from './components/InstallButton';
 import { pickWinners } from './utils/pickWinners';
+
+// App version - increment this when you want to force reset localStorage for all users
+const APP_VERSION = '1.1.0';
+const VERSION_STORAGE_KEY = 'instantpick_version';
 
 // Click sound (base64 encoded short tick)
 const SPIN_SOUND = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgkKuurZNZNjRfkK+vrpNcNzZdkK2wr5RgODdbj6yxsJZiOTdaj6qyspdkOjdZjqmzs5hmOzZYjaeys5pnPDZXjKS0tJtpPTZWi6O1tZxrPjVViqK2tp1sPzRUiKG3t59uQDRTh6C4uKBwQTRShn+4uaFyQjNRhX65uqJzQzNQhH26u6N0RDJPhHy7vKR2RTJOg3u8vaV3RjFNgXq9vqZ4RzBMgHm+v6d6SDBLf3i/wKh7SS9Kfne/wamASi9Jfna/wqqBSy5IfXW/w6uDTC5HfHS+xKyFTS1GfHO+xK2HTi1Ee3K9xa6IUC1De3G9xa+JUC1Ce3G9xrCKUS1Ae3C9xrGMUi0/em+8x7KNUy0+em68x7OPUyw+emq7x7SQVCw9eWm7yLWRVSw8eWi6yLaTViw7eGe5yLaTVis7eGe5ybeTVis6eGa5ybiUVys5eGW4ybiUVys5eGW4yriVVyo5eGS3yrqWVio4d2O3yruXVyo4d2O2yryYVyk3d2K2y72ZVyk3dmG1y76bVig2dmC0y7+cVig2dl+zy8CdVic1dV6yy8GeVic1dV2xy8KfVic1dFywy8OgVSY0dFuvy8SiVSY0dFquy8WjVCY0c1muysalVCYzc1iryselViYzc1eq0celVyUzclaq0cimWCUycVWp0cqnWiQyclSo0cqpWyQxcVOn0cuqXCQxcFKm0syqXiQwcFGl0s2rYSMwb1Cj0s6tYiMvbk+i0c6uYyMvbk6g0dCwZCIublyd0dGxZiIua0uc0NKzaCEtalqZ0NOzaSEtaVmW0NO1aiEsaFiT0NS3bCAsZlaR0NW4byAraFOO0Na6cB8rZVKL0Ne7ch8rZFCIz9e9dB4qYk+Fz9nAdx4pYU2Cztm/eR0oYEt/zdrBfBwmXkl7zdzEgBsmW0d3y93HgxolWEVzyt7KhxkkVkNuyuDNixkjU0FqyOHQjhkhUj9lyOLTkRggTz1gyOPWlBcfTTtcxuTZmBYdSjlXxeXbnxYbRzhSwufdpRUaRjRNwundqhMYQy9JvurepxIXQC1EvO7hqxAVPSpAuO/krw4TOiY7te/msw0RNiU3su/ptgwPMyIyr/DsugoPMB8up/DuvwkNLRwqo+/xwgcLKRkmnO7zxQYJJRcinO73yQUHIhMclO/5zQMFHxEXjfD7zQMDGwsRhO/+0gICFwgNfPD/1wEAEgQGcfCA2gAAAAAAAAAA');
 
 const HISTORY_STORAGE_KEY = 'instantpick_history';
 const SETTINGS_STORAGE_KEY = 'instantpick_settings';
+
+// Check and handle version updates - clear old data if version changed
+const checkAndMigrateVersion = () => {
+  const storedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
+  if (storedVersion !== APP_VERSION) {
+    // Version mismatch - clear all old data
+    localStorage.clear();
+    // Set the new version
+    localStorage.setItem(VERSION_STORAGE_KEY, APP_VERSION);
+    return true; // Data was reset
+  }
+  return false; // No reset needed
+};
+
+// Run version check on app load
+checkAndMigrateVersion();
 
 function App() {
   const [entries, setEntries] = useState([]);
@@ -130,19 +151,24 @@ function App() {
               </div>
             </div>
             
-            <button
-              onClick={() => setShowSettings(true)}
-              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 
-                       rounded-lg transition-colors duration-200"
-              aria-label="Settings"
-            >
+            <div className="flex items-center gap-2">
+              {/* Install PWA Button */}
+              <InstallButton />
+              
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 
+                         rounded-lg transition-colors duration-200"
+                aria-label="Settings"
+              >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                       d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </header>
