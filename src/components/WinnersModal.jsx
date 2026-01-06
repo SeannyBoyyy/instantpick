@@ -40,7 +40,7 @@ const createCelebrationSound = () => {
   }
 };
 
-export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemoveWinners, showConfetti, soundEnabled = true }) {
+export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemoveWinners, showConfetti, soundEnabled = true, darkMode }) {
   const celebrationSoundRef = useRef(null);
   
   // Initialize sound
@@ -93,7 +93,7 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" />
+          <div className={`fixed inset-0 backdrop-blur-sm ${darkMode ? 'bg-black/50' : 'bg-gray-900/30'}`} />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -107,12 +107,14 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl 
-                                       bg-white p-8 text-left shadow-xl transition-all">
+              <Dialog.Panel className={`w-full max-w-md transform overflow-hidden rounded-2xl 
+                                       p-8 text-left shadow-xl transition-all ${
+                                         darkMode ? 'bg-slate-800' : 'bg-white'
+                                       }`}>
                 {/* Header */}
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl font-bold text-gray-900 text-center mb-6"
+                  className={`text-2xl font-bold text-center mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}
                 >
                   🎯 InstantPick Winners
                 </Dialog.Title>
@@ -127,20 +129,26 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="flex items-center gap-3 py-3 px-4 bg-gray-50 rounded-lg"
+                          className={`flex items-center gap-3 py-3 px-4 rounded-lg ${
+                            darkMode ? 'bg-slate-700' : 'bg-gray-50'
+                          }`}
                         >
-                          <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center 
-                                         bg-teal-100 text-teal-700 font-bold rounded-full text-sm">
+                          <span className={`flex-shrink-0 w-8 h-8 flex items-center justify-center 
+                                         font-bold rounded-full text-sm ${
+                                           darkMode ? 'bg-teal-900/50 text-teal-400' : 'bg-teal-100 text-teal-700'
+                                         }`}>
                             {index + 1}
                           </span>
-                          <span className="text-lg font-medium text-gray-800 truncate">
+                          <span className={`text-lg font-medium truncate ${
+                            darkMode ? 'text-slate-200' : 'text-gray-800'
+                          }`}>
                             {winner}
                           </span>
                         </motion.li>
                       ))}
                     </ol>
                   ) : (
-                    <p className="text-center text-gray-500 py-8">
+                    <p className={`text-center py-8 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                       No winners selected
                     </p>
                   )}
@@ -152,9 +160,12 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
                     <button
                       type="button"
                       onClick={onClose}
-                      className="flex-1 py-3 px-4 text-sm font-medium text-gray-700 
-                               bg-gray-100 rounded-lg hover:bg-gray-200 
-                               transition-colors duration-200"
+                      className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg 
+                               transition-colors duration-200 ${
+                                 darkMode 
+                                   ? 'text-slate-300 bg-slate-700 hover:bg-slate-600' 
+                                   : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                               }`}
                     >
                       Close
                     </button>
@@ -178,9 +189,12 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
                       onReset();
                       onClose();
                     }}
-                    className="w-full py-3 px-4 text-sm font-medium text-amber-700 
-                             bg-amber-50 border border-amber-200 rounded-lg 
-                             hover:bg-amber-100 transition-colors duration-200"
+                    className={`w-full py-3 px-4 text-sm font-medium rounded-lg 
+                             border transition-colors duration-200 ${
+                               darkMode 
+                                 ? 'text-amber-400 bg-amber-900/30 border-amber-700 hover:bg-amber-900/50'
+                                 : 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100'
+                             }`}
                   >
                     Remove Winners from Entries & Spin Again
                   </button>

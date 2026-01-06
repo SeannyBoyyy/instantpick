@@ -50,10 +50,20 @@ function App() {
       soundEnabled: true,
       confettiEnabled: true,
       colorTheme: 'teal',
+      darkMode: false,
     };
   });
   
   const entryInputRef = useRef(null);
+  
+  // Apply dark mode class to document
+  useEffect(() => {
+    if (settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [settings.darkMode]);
   
   // Save settings to localStorage
   useEffect(() => {
@@ -131,9 +141,9 @@ function App() {
   const canSpin = uniqueEntryCount > 0 && !isSpinning;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className={`min-h-screen transition-colors duration-300 ${settings.darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 shadow-sm">
+      <header className={`border-b shadow-sm transition-colors duration-300 ${settings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo Area */}
@@ -142,23 +152,50 @@ function App() {
               <img 
                 src="logo.png" 
                 alt="Company Logo" 
-                className="h-10 w-auto object-contain"
+                className={`h-10 w-auto object-contain ${settings.darkMode ? 'brightness-110' : ''}`}
               />
               
               <div>
-                <h1 className="text-xl font-bold text-gray-900">InstantPick</h1>
-                <p className="text-xs text-gray-500">Random Winner Selector</p>
+                <h1 className={`text-xl font-bold ${settings.darkMode ? 'text-white' : 'text-gray-900'}`}>InstantPick</h1>
+                <p className={`text-xs ${settings.darkMode ? 'text-slate-400' : 'text-gray-500'}`}>Random Winner Selector</p>
               </div>
             </div>
             
             <div className="flex items-center gap-2">
               {/* Install PWA Button */}
-              <InstallButton />
+              <InstallButton darkMode={settings.darkMode} />
+              
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={() => setSettings(prev => ({ ...prev, darkMode: !prev.darkMode }))}
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  settings.darkMode 
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+                aria-label="Toggle Dark Mode"
+                title={settings.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {settings.darkMode ? (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                )}
+              </button>
               
               <button
                 onClick={() => setShowSettings(true)}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 
-                         rounded-lg transition-colors duration-200"
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  settings.darkMode 
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
                 aria-label="Settings"
               >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -180,19 +217,26 @@ function App() {
           {/* Left Column - Entries + History */}
           <div className="space-y-6">
             {/* Entries Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className={`rounded-2xl shadow-sm border p-6 transition-colors duration-300 ${
+              settings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'
+            }`}>
               <EntryInput 
                 ref={entryInputRef}
                 entries={entries} 
-                setEntries={setEntries} 
+                setEntries={setEntries}
+                darkMode={settings.darkMode}
               />
             </div>
             
             {/* Winner History Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className={`rounded-2xl shadow-sm border p-6 transition-colors duration-300 ${
+              settings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'
+            }`}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <h2 className={`text-lg font-semibold flex items-center gap-2 ${
+                  settings.darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <svg className="w-5 h-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                           d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                   </svg>
@@ -201,7 +245,9 @@ function App() {
                 {winnerHistory.length > 0 && (
                   <button
                     onClick={handleClearHistory}
-                    className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+                    className={`text-xs transition-colors ${
+                      settings.darkMode ? 'text-slate-500 hover:text-red-400' : 'text-gray-400 hover:text-red-500'
+                    }`}
                   >
                     Clear
                   </button>
@@ -209,8 +255,8 @@ function App() {
               </div>
               
               {winnerHistory.length === 0 ? (
-                <div className="text-center py-6 text-gray-400">
-                  <svg className="w-10 h-10 mx-auto mb-2 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className={`text-center py-6 ${settings.darkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+                  <svg className={`w-10 h-10 mx-auto mb-2 ${settings.darkMode ? 'text-slate-600' : 'text-gray-200'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                           d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                   </svg>
@@ -223,12 +269,12 @@ function App() {
                       key={entry.id} 
                       className={`p-3 rounded-lg border transition-all ${
                         historyIdx === 0 
-                          ? 'bg-teal-50 border-teal-200' 
-                          : 'bg-gray-50 border-gray-100'
+                          ? settings.darkMode ? 'bg-teal-900/30 border-teal-700' : 'bg-teal-50 border-teal-200'
+                          : settings.darkMode ? 'bg-slate-700/50 border-slate-600' : 'bg-gray-50 border-gray-100'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs text-gray-500">
+                        <span className={`text-xs ${settings.darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                           {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                         {historyIdx === 0 && (
@@ -243,8 +289,8 @@ function App() {
                             key={idx}
                             className={`inline-flex items-center gap-1 px-2 py-1 rounded text-sm ${
                               historyIdx === 0 
-                                ? 'bg-teal-100 text-teal-800' 
-                                : 'bg-white border border-gray-200 text-gray-700'
+                                ? settings.darkMode ? 'bg-teal-800/50 text-teal-200' : 'bg-teal-100 text-teal-800'
+                                : settings.darkMode ? 'bg-slate-600 border-slate-500 text-slate-200' : 'bg-white border border-gray-200 text-gray-700'
                             }`}
                           >
                             <span className="font-bold text-xs">{idx + 1}.</span>
@@ -260,7 +306,9 @@ function App() {
           </div>
 
           {/* Right Column - Wheel Only */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className={`rounded-2xl shadow-sm border p-6 transition-colors duration-300 ${
+            settings.darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'
+          }`}>
             <div className="flex flex-col items-center">
               {/* Wheel */}
               <Wheel
@@ -270,18 +318,21 @@ function App() {
                 winners={winners}
                 soundEnabled={settings.soundEnabled}
                 colorTheme={settings.colorTheme}
+                darkMode={settings.darkMode}
               />
               
               {/* Stats */}
-              <div className="w-full mt-6 mb-4 flex justify-center gap-8 text-sm text-gray-500">
+              <div className={`w-full mt-6 mb-4 flex justify-center gap-8 text-sm ${
+                settings.darkMode ? 'text-slate-400' : 'text-gray-500'
+              }`}>
                 <div className="text-center">
-                  <span className="block text-2xl font-bold text-gray-900">
+                  <span className={`block text-2xl font-bold ${settings.darkMode ? 'text-white' : 'text-gray-900'}`}>
                     {uniqueEntryCount}
                   </span>
                   <span>Entries</span>
                 </div>
                 <div className="text-center">
-                  <span className="block text-2xl font-bold text-teal-600">
+                  <span className="block text-2xl font-bold text-teal-500">
                     {settings.winnerCount}
                   </span>
                   <span>Winners</span>
@@ -299,7 +350,7 @@ function App() {
               
               {/* Helper Text */}
               {uniqueEntryCount > 0 && uniqueEntryCount < settings.winnerCount && (
-                <p className="mt-4 text-sm text-amber-600 text-center">
+                <p className={`mt-4 text-sm text-center ${settings.darkMode ? 'text-amber-400' : 'text-amber-600'}`}>
                   ⚠️ Only {uniqueEntryCount} entries available. 
                   {uniqueEntryCount === 1 ? ' 1 winner' : ` ${uniqueEntryCount} winners`} will be selected.
                 </p>
@@ -310,7 +361,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto py-6 text-center text-sm text-gray-400">
+      <footer className={`mt-auto py-6 text-center text-sm ${settings.darkMode ? 'text-slate-500' : 'text-gray-400'}`}>
         <p>InstantPick © {new Date().getFullYear()} • Professional Random Selection</p>
       </footer>
 
@@ -323,6 +374,7 @@ function App() {
         onRemoveWinners={handleRemoveWinnersFromEntries}
         showConfetti={settings.confettiEnabled}
         soundEnabled={settings.soundEnabled}
+        darkMode={settings.darkMode}
       />
       <SettingsPanel
         isOpen={showSettings}
@@ -330,6 +382,7 @@ function App() {
         settings={settings}
         onSettingsChange={setSettings}
         onResetApp={handleResetApp}
+        darkMode={settings.darkMode}
       />
     </div>
   );

@@ -7,7 +7,8 @@ export default function SettingsPanel({
   onClose, 
   settings, 
   onSettingsChange,
-  onResetApp
+  onResetApp,
+  darkMode
 }) {
   const updateSetting = (key, value) => {
     onSettingsChange({ ...settings, [key]: value });
@@ -25,7 +26,7 @@ export default function SettingsPanel({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-sm" />
+          <div className={`fixed inset-0 backdrop-blur-sm ${darkMode ? 'bg-black/50' : 'bg-gray-900/30'}`} />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -39,13 +40,17 @@ export default function SettingsPanel({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl 
-                                       bg-white p-6 shadow-xl transition-all">
+              <Dialog.Panel className={`w-full max-w-sm transform overflow-hidden rounded-2xl 
+                                       p-6 shadow-xl transition-all ${
+                                         darkMode ? 'bg-slate-800' : 'bg-white'
+                                       }`}>
                 <Dialog.Title
                   as="h3"
-                  className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+                  className={`text-xl font-bold mb-6 flex items-center gap-2 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}
                 >
-                  <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className={`w-5 h-5 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                           d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -57,7 +62,7 @@ export default function SettingsPanel({
                 <div className="space-y-6">
                   {/* Number of Winners */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                       Number of Winners
                     </label>
                     <input
@@ -66,18 +71,22 @@ export default function SettingsPanel({
                       max="100"
                       value={settings.winnerCount}
                       onChange={(e) => updateSetting('winnerCount', Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg 
+                      className={`w-full px-4 py-2 border rounded-lg 
                                focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500
-                               transition-all duration-200"
+                               transition-all duration-200 ${
+                                 darkMode 
+                                   ? 'bg-slate-700 border-slate-600 text-white placeholder-slate-400' 
+                                   : 'bg-white border-gray-200 text-gray-900'
+                               }`}
                     />
-                    <p className="mt-1.5 text-xs text-gray-500">
+                    <p className={`mt-1.5 text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                       How many winners to pick each spin
                     </p>
                   </div>
 
                   {/* Color Theme */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-700'}`}>
                       Color Theme
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -87,8 +96,10 @@ export default function SettingsPanel({
                           onClick={() => updateSetting('colorTheme', key)}
                           className={`p-2 rounded-lg border-2 transition-all duration-200 ${
                             settings.colorTheme === key 
-                              ? 'border-teal-500 bg-teal-50' 
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/30' 
+                              : darkMode 
+                                ? 'border-slate-600 hover:border-slate-500 bg-slate-700'
+                                : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <div className="flex gap-0.5 mb-1.5 justify-center">
@@ -100,7 +111,7 @@ export default function SettingsPanel({
                               />
                             ))}
                           </div>
-                          <span className="text-xs font-medium text-gray-700">{theme.name}</span>
+                          <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{theme.name}</span>
                         </button>
                       ))}
                     </div>
@@ -111,14 +122,14 @@ export default function SettingsPanel({
                     {/* Sound Toggle */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Sound Effects</span>
-                        <p className="text-xs text-gray-500">Play sound when spinning</p>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>Sound Effects</span>
+                        <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>Play sound when spinning</p>
                       </div>
                       <Switch
                         checked={settings.soundEnabled}
                         onChange={(checked) => updateSetting('soundEnabled', checked)}
                         className={`${
-                          settings.soundEnabled ? 'bg-teal-600' : 'bg-gray-200'
+                          settings.soundEnabled ? 'bg-teal-600' : darkMode ? 'bg-slate-600' : 'bg-gray-200'
                         } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
                       >
                         <span
@@ -132,14 +143,14 @@ export default function SettingsPanel({
                     {/* Confetti Toggle */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Confetti</span>
-                        <p className="text-xs text-gray-500">Celebrate winners with confetti</p>
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-700'}`}>Confetti</span>
+                        <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>Celebrate winners with confetti</p>
                       </div>
                       <Switch
                         checked={settings.confettiEnabled}
                         onChange={(checked) => updateSetting('confettiEnabled', checked)}
                         className={`${
-                          settings.confettiEnabled ? 'bg-teal-600' : 'bg-gray-200'
+                          settings.confettiEnabled ? 'bg-teal-600' : darkMode ? 'bg-slate-600' : 'bg-gray-200'
                         } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
                       >
                         <span
@@ -153,16 +164,19 @@ export default function SettingsPanel({
                 </div>
 
                 {/* Reset App Button */}
-                <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className={`mt-6 pt-6 border-t ${darkMode ? 'border-slate-700' : 'border-gray-100'}`}>
                   <button
                     onClick={() => {
                       if (window.confirm('This will clear all entries, history, and settings. Are you sure?')) {
                         onResetApp();
                       }
                     }}
-                    className="w-full py-2.5 px-4 text-sm font-medium text-red-600 
-                             bg-red-50 border border-red-200 rounded-lg 
-                             hover:bg-red-100 transition-colors duration-200"
+                    className={`w-full py-2.5 px-4 text-sm font-medium rounded-lg 
+                             transition-colors duration-200 ${
+                               darkMode 
+                                 ? 'text-red-400 bg-red-900/30 border border-red-800 hover:bg-red-900/50'
+                                 : 'text-red-600 bg-red-50 border border-red-200 hover:bg-red-100'
+                             }`}
                   >
                     Reset App & Clear All Data
                   </button>

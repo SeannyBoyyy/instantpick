@@ -51,14 +51,6 @@ export const COLOR_THEMES = {
       '#14532d', '#166534', '#16a34a', '#22c55e',
     ]
   },
-  monochrome: {
-    name: 'Monochrome',
-    colors: [
-      '#1f2937', '#374151', '#4b5563', '#6b7280',
-      '#9ca3af', '#d1d5db', '#e5e7eb', '#f3f4f6',
-      '#111827', '#1f2937', '#374151', '#4b5563',
-    ]
-  },
 };
 
 // Create realistic roulette tick sound - soft wooden click
@@ -127,7 +119,7 @@ const createWinSound = () => {
   };
 };
 
-export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [], soundEnabled = true, colorTheme = 'teal' }) {
+export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [], soundEnabled = true, colorTheme = 'teal', darkMode }) {
   const canvasRef = useRef(null);
   const [rotation, setRotation] = useState(0);
   const [targetRotation, setTargetRotation] = useState(0);
@@ -404,9 +396,10 @@ export default function Wheel({ entries, isSpinning, onSpinComplete, winners = [
       </motion.div>
       
       {displayEntries.length === 1 && displayEntries[0] === 'Add entries...' && (
-        <div className="absolute inset-0 flex items-center justify-center 
-                        bg-white/80 rounded-full">
-          <p className="text-gray-400 text-center px-8">
+        <div className={`absolute inset-0 flex items-center justify-center rounded-full ${
+          darkMode ? 'bg-slate-800/90' : 'bg-white/80'
+        }`}>
+          <p className={`text-center px-8 ${darkMode ? 'text-slate-400' : 'text-gray-400'}`}>
             Add entries to<br />start spinning!
           </p>
         </div>
