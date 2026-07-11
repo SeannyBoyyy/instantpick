@@ -114,9 +114,13 @@ export default function WinnersModal({ isOpen, onClose, winners, onReset, onRemo
                 {/* Header */}
                 <Dialog.Title
                   as="h3"
-                  className={`text-2xl font-bold text-center mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                  className={`text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}
                 >
-                  🎯 InstantPick Winners
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M9 8H4.5a2.5 2.5 0 000 5H9m6-5h4.5a2.5 2.5 0 010 5H15M9 8V6a3 3 0 016 0v2m-6 0v6a3 3 0 006 0V8m-9 8h12m-8 0v3m4-3v3" />
+                  </svg>
+                  InstantPick Winners
                 </Dialog.Title>
 
                 {/* Winners List */}

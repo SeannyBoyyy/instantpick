@@ -96,7 +96,9 @@ export default function SettingsPanel({
                           onClick={() => updateSetting('colorTheme', key)}
                           className={`p-2 rounded-lg border-2 transition-all duration-200 ${
                             settings.colorTheme === key 
-                              ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/30' 
+                              ? darkMode
+                                ? 'border-teal-500 bg-teal-900/30'
+                                : 'border-teal-500 bg-teal-50'
                               : darkMode 
                                 ? 'border-slate-600 hover:border-slate-500 bg-slate-700'
                                 : 'border-gray-200 hover:border-gray-300'

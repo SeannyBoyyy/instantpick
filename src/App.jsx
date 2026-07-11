@@ -17,17 +17,19 @@ const SPIN_SOUND = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAAB
 const HISTORY_STORAGE_KEY = 'instantpick_history';
 const SETTINGS_STORAGE_KEY = 'instantpick_settings';
 
-// Check and handle version updates - clear old data if version changed
+// Check and handle version updates. Historically this cleared ALL localStorage
+// on every version bump, silently wiping entries/settings/history with no warning.
+// None of the current data shapes need a breaking migration, so this now just
+// tracks the version. If a future update genuinely requires clearing specific
+// data (e.g. a settings shape change), do it explicitly and narrowly here,
+// scoped to just the affected key(s) - not a blanket wipe.
 const checkAndMigrateVersion = () => {
   const storedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
   if (storedVersion !== APP_VERSION) {
-    // Version mismatch - clear all old data
-    localStorage.clear();
-    // Set the new version
     localStorage.setItem(VERSION_STORAGE_KEY, APP_VERSION);
-    return true; // Data was reset
+    return true; // version was updated (no data touched)
   }
-  return false; // No reset needed
+  return false;
 };
 
 // Run version check on app load
