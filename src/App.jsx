@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import Wheel from './components/Wheel';
+import Logo from './components/Logo';
 import EntryInput from './components/EntryInput';
 import SpinButton from './components/SpinButton';
 import WinnersModal from './components/WinnersModal';
@@ -151,11 +152,7 @@ function App() {
             {/* Logo Area */}
             <div className="flex items-center gap-4">
               {/* Company Logo */}
-              <img 
-                src="logo.png" 
-                alt="Company Logo" 
-                className={`h-10 w-auto object-contain ${settings.darkMode ? 'brightness-110' : ''}`}
-              />
+              <Logo colorTheme={settings.colorTheme} darkMode={settings.darkMode} className="h-10 w-10" />
               
               <div>
                 <h1 className={`text-xl font-bold ${settings.darkMode ? 'text-white' : 'text-gray-900'}`}>InstantPick</h1>
