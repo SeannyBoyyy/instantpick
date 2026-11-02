@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build
+        env:
+          # Relative URLs work at both the project URL and custom domain root.
+          VITE_BASE_PATH: ./
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4

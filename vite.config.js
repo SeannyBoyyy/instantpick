@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const basePath = globalThis.process?.env?.VITE_BASE_PATH || './'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -18,8 +20,8 @@ export default defineConfig({
         theme_color: '#0d9488',
         background_color: '#f8fafc',
         display: 'standalone',
-        scope: '/instantpick/',
-        start_url: '/instantpick/',
+        scope: basePath,
+        start_url: basePath,
         icons: [
           {
             src: 'logo.png',
@@ -74,5 +76,5 @@ export default defineConfig({
       }
     })
   ],
-  base: '/instantpick/',
+  base: basePath,
 })
